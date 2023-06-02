@@ -1,27 +1,28 @@
 import { Route, Routes } from 'react-router-dom';
-import { lazy } from 'react';
-import { Layout } from './Layout/Layout'
-import { Cast } from './Cast/Cast'
-import { Rewiews } from './Rewiews/Reviews'
+import { Suspense, lazy } from 'react';
 
-const Home = lazy(() => import('pages/Home'));
-const MovieDetails = lazy(() => import('pages/MovieDetails'));
-const Movies = lazy(() => import('pages/Movies'));
+const Home = lazy(() => import('pages/Home/Home'));
+const MovieDetails = lazy(() => import('../pages/MovieDetails/MovieDetails'));
+const Movies = lazy(() => import('pages/Movies/Movies'));
+const Cast = lazy(() => import('./Cast/Cast'));
+const Reviews = lazy(() => import('./Reviews/Reviews'));
+const Layout = lazy(() => import('./Layout/Layout'));
 
 export const App = () => {
   return (
     <>
+    <Suspense>
         <Routes>
           <Route path='/' element={<Layout />}>
              <Route index element={<Home />} />
              <Route path="movies" element={<Movies />} />
              <Route path="movies/:movieId/" element={<MovieDetails />}>
                 <Route path="cast" element={<Cast />} />
-                <Route path="rewiews" element={<Rewiews />} />
+                <Route path="reviews" element={<Reviews />} />
              </Route>
           </Route>
         </Routes>
-
+        </Suspense>
     </>
   );
 };

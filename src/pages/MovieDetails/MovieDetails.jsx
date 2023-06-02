@@ -1,16 +1,20 @@
 import { useState, useEffect } from "react"
-import { fetchMovieDetails } from '../services/api'
-import { useParams, Link, Outlet } from 'react-router-dom'
+import { fetchMovieDetails } from '../../services/api'
+import { useParams, Link, Outlet, useNavigate, useLocation } from 'react-router-dom'
+import Button from '@mui/material/Button';
+import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
+import { MovieInfo, BoxInfo } from './MovieDetails.styled'
 
 const MovieDetails = () => {
 const { movieId } = useParams();
 const [movieInfo, setMovieInfo] = useState();
+const navigate = useNavigate();
+const location = useLocation();
 
 
 useEffect(() => {
     fetchMovieDetails(movieId).then((setMovieInfo)).catch(error => console.log(error));
 }, [movieId, setMovieInfo]);
-console.log(movieInfo)
 
 if (!movieInfo) {
     return null;
@@ -20,8 +24,13 @@ if (!movieInfo) {
   const genreNames = Object.values(genres).map(genre => genre.name);
 
   return (
-    <div>
-      <div>
+    <>
+    <BoxInfo>
+      <Button variant="contained" color='inherit' startIcon={<KeyboardReturnIcon />}
+      onClick={() => { navigate(location?.state?.from ?? '/')}}>
+        Go back
+      </Button>
+      <MovieInfo>
         <img
           src={`https://image.tmdb.org/t/p/w500${poster_path}`}
           alt={title}
@@ -37,13 +46,14 @@ if (!movieInfo) {
           <h4>Genres</h4>
           <p>{genreNames.join(', ')}</p>
         </div>
-      </div>
+      </MovieInfo>
 
       <p>Additional information</p>
       <ul>
         <li>
           <Link
             to={`/movies/${movieInfo.id}/cast`}
+            state={location.state}
           >
             Cast
           </Link>
@@ -51,13 +61,15 @@ if (!movieInfo) {
         <li>
           <Link
             to={`/movies/${movieInfo.id}/reviews`}
+            state={location.state}
           >
             Reviews
           </Link>
         </li>
       </ul>
       <Outlet />
-    </div>
+    </BoxInfo>
+    </>
   );
 }
 
